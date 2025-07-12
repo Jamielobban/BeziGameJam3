@@ -5787,7 +5787,7 @@
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Vector1_5660967D",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_ImageBrightness",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",

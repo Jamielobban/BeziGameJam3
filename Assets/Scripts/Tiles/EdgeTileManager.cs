@@ -1,4 +1,8 @@
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
+using System.Collections.Generic;
 
 public class EdgeTileManager : MonoBehaviour
 {
@@ -8,6 +12,9 @@ public class EdgeTileManager : MonoBehaviour
     public int gridWidth = 16;
     public int gridHeight = 16;
     public float tileSize = 1f;
+
+    private readonly List<EdgeTile> cornerTiles = new();
+    private readonly List<EdgeTile> allTiles = new();
 
     private void Awake()
     {
@@ -19,13 +26,32 @@ public class EdgeTileManager : MonoBehaviour
         Instance = this;
     }
 
+    [System.Obsolete]
     private void Start()
     {
         PlaceEdgeTiles();
+
+        // Reset tile states after placement
+        foreach (var tile in allTiles)
+        {
+            tile.activated = false;
+
+            if (cornerTiles.Contains(tile))
+            {
+                tile.GetComponent<SpriteRenderer>().color = Color.red;  // Keep corners red
+            }
+            else
+            {
+                tile.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+        }
     }
 
     public void PlaceEdgeTiles()
     {
+        cornerTiles.Clear();
+        allTiles.Clear();
+
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
@@ -40,36 +66,85 @@ public class EdgeTileManager : MonoBehaviour
                         (y - gridHeight / 2f + 0.5f) * tileSize
                     );
 
-                    GameObject tile = Instantiate(edgeTilePrefab, position, Quaternion.identity, transform);
+                    GameObject tileObj = Instantiate(edgeTilePrefab, position, Quaternion.identity, transform);
+                    EdgeTile tile = tileObj.GetComponent<EdgeTile>();
+                    allTiles.Add(tile);
 
-                    // Set corner color (or tag, or sprite)
                     if (isCorner)
                     {
-                        tile.GetComponent<SpriteRenderer>().color = Color.red; // Corner
-                        tile.GetComponent<EdgeTile>().Activate();
+                        cornerTiles.Add(tile);
+                        tile.GetComponent<SpriteRenderer>().color = Color.red;
                     }
                     else
                     {
-                        tile.GetComponent<SpriteRenderer>().color = Color.white; // Edge
-                        tile.layer = LayerMask.NameToLayer("Ground");
+                        tile.GetComponent<SpriteRenderer>().color = Color.white;
+                        tileObj.layer = LayerMask.NameToLayer("Ground");
                     }
                 }
             }
         }
     }
 
+    public void ClearTiles()
+    {
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                DestroyImmediate(transform.GetChild(i).gameObject);
+            else
+#endif
+                Destroy(transform.GetChild(i).gameObject);
+        }
+
+        cornerTiles.Clear();
+        allTiles.Clear();
+    }
+
     [System.Obsolete]
     public void CheckWinCondition()
     {
-        Debug.Log("dONE");
-        EdgeTile[] tiles = FindObjectsOfType<EdgeTile>();
-        foreach (var tile in tiles)
+        Debug.Log("Checking Win Condition...");
+
+        foreach (var tile in allTiles)
         {
+            if (cornerTiles.Contains(tile))
+                continue;  // Skip corners
+
             if (!tile.activated)
-                return; // Still tiles left
+                return;  // Still tiles left to activate
         }
 
-        Debug.Log("All tiles activated! You win!");
-        // You can trigger effects or next level here
+        Debug.Log("All tiles activated! Starting transition...");
+        FindObjectOfType<LevelTransitionManager>().StartTransition(() =>
+        {
+            Debug.Log("Level swapped!");
+        });
     }
+
+   #if UNITY_EDITOR
+    [ContextMenu("Preview Edge Tiles In Editor")]
+    private void EditorPreviewTiles()
+    {
+        ClearTiles();
+        PlaceEdgeTiles();
+    }
+
+    [ContextMenu("Delete All Edge Tiles In Editor")]
+    private void EditorDeleteTiles()
+    {
+        ClearTiles();
+    }
+
+    private void OnValidate()
+    {
+        if (!Application.isPlaying)
+        {
+            if (transform.childCount == 0)
+            {
+                PlaceEdgeTiles();
+            }
+        }
+    }
+    #endif
 }

@@ -51,15 +51,16 @@ Material:
     - RGB_STRIPES: 1
     - SCROLL_STATIC: 0
     - STATIC: 1
-    - Vector1_1BFF6B46: 256
+    - Vector1_1BFF6B46: 512
     - Vector1_5660967D: 2
     - _ColorMask: 15
-    - _DistortionStrength: 0.03
+    - _DistortionStrength: 0.029999733
+    - _ImageBrightness: 2
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ScanlineHeight: 10
     - _ScanlineStrength: 0.5
-    - _StaticStrength: 0.1
+    - _StaticStrength: 0.18999994
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
