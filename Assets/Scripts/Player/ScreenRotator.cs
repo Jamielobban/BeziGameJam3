@@ -17,7 +17,7 @@ public class ScreenRotator : MonoBehaviour
     {
         UpdateGravity();
     }
-    
+
     public void SetRotationDirection(float direction)
     {
         rotationDirection = direction;
@@ -54,4 +54,14 @@ public class ScreenRotator : MonoBehaviour
         float radians = currentRotation * Mathf.Deg2Rad;
         Physics2D.gravity = new Vector2(Mathf.Sin(radians), -Mathf.Cos(radians)) * gravityStrength;
     }
-}
+    
+    public void ResetRotation()
+    {
+        currentRotation = 0f;
+        currentRotationSpeed = 0f;
+        rotationDirection = 0f;
+
+        Camera.main.transform.rotation = Quaternion.identity;
+        UpdateGravity();
+    }
+    }

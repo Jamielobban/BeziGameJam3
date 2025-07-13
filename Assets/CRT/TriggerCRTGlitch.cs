@@ -18,19 +18,11 @@ public class CRTGlitchTester : MonoBehaviour
 
     private void Start()
     {
-        // Force CRT to power-off state first
-        crtQuad.localScale = new Vector3(10f, 5f, 5f);  // Your collapsed scale here
-        crtMaterial.SetVector("_CRTWarpStrength", new Vector4(5f, 5f, 0f, 0f));
-
-        crtMaterial.SetFloat("_DistortionStrength", -13.28f);
-        crtMaterial.SetFloat("_StaticStrength", 1.9f);
-        crtMaterial.SetFloat("_ImageBrightness", 1.24f);
-
-        // Now play Power On animation
-        TestPowerOnEffect();
+        SoftResetDie();
     }
 
     // Glitch effect with configurable duration
+    [ContextMenu("CRT Glitch")]
     private void TestCRTGlitchEffect(float duration)
     {
         DOTween.To(() => crtMaterial.GetFloat("_DistortionStrength"),
@@ -47,7 +39,7 @@ public class CRTGlitchTester : MonoBehaviour
     }
 
     [ContextMenu("Reset CRT Settings")]
-    private void ResetCRTSettings()
+    public void ResetCRTSettings()
     {
         DOTween.To(() => crtMaterial.GetFloat("_DistortionStrength"),
                    x => crtMaterial.SetFloat("_DistortionStrength", x),
@@ -67,17 +59,17 @@ public class CRTGlitchTester : MonoBehaviour
     [ContextMenu("Test Power Off Effect")]
     public void TestPowerOffEffect()
     {
-        float duration = 0.55f;  // Sync duration for glitch and collapse
+        float duration = 0.45f;  // Sync duration for glitch and collapse
 
         var seq = DOTween.Sequence();
 
-        seq.AppendCallback(() => TestCRTGlitchEffect(duration));
+        seq.AppendCallback(() => TestCRTGlitchEffect(duration * 0.75f));
 
-        //seq.Join(crtQuad.DOScale(new Vector3(10f,5f,5f), duration).SetEase(Ease.InQuad));
+        seq.Join(crtQuad.DOScaleY(0.1f, duration * 1.55f).SetEase(Ease.InQuad));
 
         seq.Join(DOTween.To(() => crtMaterial.GetVector("_CRTWarpStrength"),
-                            v => crtMaterial.SetVector("_CRTWarpStrength", new Vector4(v.x, v.y, 0f, 0f)),
-                            new Vector4(5, 5, 0f, 0f), duration * 2));
+                            v => crtMaterial.SetVector("_CRTWarpStrength", new Vector4(0.5f, v.y, 0f, 0f)),
+                            new Vector4(0.5f, 5, 0f, 0f), duration * 2));
     }
 
     [ContextMenu("Test Power On Effect")]
@@ -90,5 +82,20 @@ public class CRTGlitchTester : MonoBehaviour
         DOTween.To(() => crtMaterial.GetVector("_CRTWarpStrength"),
                    v => crtMaterial.SetVector("_CRTWarpStrength", new Vector4(v.x, v.y, 0f, 0f)),
                    new Vector4(ResetCRTWarpStrength.x, ResetCRTWarpStrength.y, 0f, 0f), 0.7f);
+    }
+
+    public void SoftResetDie()
+    {
+        //TestCRTGlitchEffect(0.1f);
+        //ResetCRTSettings();
+         // Force CRT to power-off state first
+        crtQuad.localScale = new Vector3(10f, 5f, 5f);  // Your collapsed scale here
+        crtMaterial.SetVector("_CRTWarpStrength", new Vector4(5f, 5f, 0f, 0f));
+
+        crtMaterial.SetFloat("_DistortionStrength", -13.28f);
+        crtMaterial.SetFloat("_StaticStrength", 1.9f);
+        crtMaterial.SetFloat("_ImageBrightness", 1.24f);
+
+        TestPowerOnEffect();
     }
 }

@@ -29,16 +29,44 @@ public class EdgeTileManager : MonoBehaviour
     [System.Obsolete]
     private void Start()
     {
-        PlaceEdgeTiles();
+        if (transform.childCount == 0)
+        {
+            PlaceEdgeTiles();
+        }
 
-        // Reset tile states after placement
+        cornerTiles.Clear();
+        allTiles.Clear();
+
+        foreach (Transform child in transform)
+        {
+            EdgeTile tile = child.GetComponent<EdgeTile>();
+            if (tile == null) continue;
+
+            allTiles.Add(tile);
+            tile.activated = false;
+
+            // Rebuild corner list by checking RED color (as marked during editor placement)
+            var sprite = tile.GetComponent<SpriteRenderer>();
+            if (sprite.color == Color.red)
+            {
+                cornerTiles.Add(tile);
+            }
+            else
+            {
+                sprite.color = Color.white;
+            }
+        }
+    }
+
+    public void ResetAllTiles()
+    {
         foreach (var tile in allTiles)
         {
             tile.activated = false;
 
             if (cornerTiles.Contains(tile))
             {
-                tile.GetComponent<SpriteRenderer>().color = Color.red;  // Keep corners red
+                tile.GetComponent<SpriteRenderer>().color = Color.red; // Corner stays red
             }
             else
             {
@@ -46,6 +74,7 @@ public class EdgeTileManager : MonoBehaviour
             }
         }
     }
+
 
     public void PlaceEdgeTiles()
     {

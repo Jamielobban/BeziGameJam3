@@ -30,6 +30,5 @@ public class PlayerInputHandler : MonoBehaviour
     private void FixedUpdate()
     {
         movement.SetRotation(rotator.CurrentRotation);
-        movement.ApplyMovement();
     }
 }
