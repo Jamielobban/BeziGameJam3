@@ -19198,6 +19198,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!4 &1849178773 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2090014017502310563, guid: aa98fbbc3ca28b2469bf2471d6f1a89e, type: 3}
+  m_PrefabInstance: {fileID: 6763262718244933703}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1857551436
 GameObject:
   m_ObjectHideFlags: 0
@@ -23148,6 +23153,7 @@ Transform:
   m_Children:
   - {fileID: 1022312229}
   - {fileID: 350450979}
+  - {fileID: 1849178773}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2140366681
@@ -23290,12 +23296,8 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 2134416094}
     m_Modifications:
-    - target: {fileID: 2090014017502310563, guid: aa98fbbc3ca28b2469bf2471d6f1a89e, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.1
-      objectReference: {fileID: 0}
     - target: {fileID: 2090014017502310563, guid: aa98fbbc3ca28b2469bf2471d6f1a89e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.295
@@ -23314,15 +23316,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2090014017502310563, guid: aa98fbbc3ca28b2469bf2471d6f1a89e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2090014017502310563, guid: aa98fbbc3ca28b2469bf2471d6f1a89e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2090014017502310563, guid: aa98fbbc3ca28b2469bf2471d6f1a89e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2090014017502310563, guid: aa98fbbc3ca28b2469bf2471d6f1a89e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -23349,7 +23351,6 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 6763262718244933703}
   - {fileID: 476314406}
   - {fileID: 536059255}
   - {fileID: 874336892}

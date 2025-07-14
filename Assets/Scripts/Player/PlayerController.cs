@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [Header("Feedbacks")]
     public MMF_Player jumpFeedbacks;
     public MMF_Player landFeedbacks;
+    public MMF_Player activateFeedbacks;
 
     [Header("Debug")]
     public Transform groundCheckVisual;
@@ -172,6 +173,10 @@ public class PlayerController : MonoBehaviour
         EdgeTile tile = other.GetComponentInParent<EdgeTile>();
         if (tile != null)
         {
+            if (!tile.activated)
+            {  
+                activateFeedbacks.PlayFeedbacks();
+            }
             tile.Activate();
         }
     }

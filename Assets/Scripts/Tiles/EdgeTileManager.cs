@@ -133,7 +133,7 @@ public class EdgeTileManager : MonoBehaviour
     [System.Obsolete]
     public void CheckWinCondition()
     {
-        Debug.Log("Checking Win Condition...");
+        //Debug.Log("Checking Win Condition...");
 
         foreach (var tile in allTiles)
         {

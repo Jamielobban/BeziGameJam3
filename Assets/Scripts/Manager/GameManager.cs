@@ -9,11 +9,14 @@ public class GameManager : MonoBehaviour
 
     public WorldRotator worldRotator;
 
+    private AudioSource audio1;
+
 
     void Start()
     {
         player = FindFirstObjectByType<PlayerController>();
         worldRotator = FindFirstObjectByType<WorldRotator>();
+        audio1 = GetComponentInChildren<AudioSource>();
     }
     public void SoftReset()
     {
@@ -21,7 +24,7 @@ public class GameManager : MonoBehaviour
         tileManager.ResetAllTiles(); // You'll need to implement this
         crtGlitch.SoftResetDie();
         worldRotator.ResetRotation();
-
+        audio1.Play();
         DOVirtual.DelayedCall(0.3f, () =>
         {
             // Reset player
