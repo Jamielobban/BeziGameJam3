@@ -6,19 +6,21 @@ public class GameManager : MonoBehaviour
     public PlayerController player;
     public Transform playerSpawnPoint;
     public EdgeTileManager tileManager;
-    public ScreenRotator screenRotator;
+
+    public WorldRotator worldRotator;
 
 
     void Start()
     {
         player = FindFirstObjectByType<PlayerController>();
+        worldRotator = FindFirstObjectByType<WorldRotator>();
     }
     public void SoftReset()
     {
         //crtGlitch.TestPowerOffEffect();
-        screenRotator.ResetRotation();
         tileManager.ResetAllTiles(); // You'll need to implement this
         crtGlitch.SoftResetDie();
+        worldRotator.ResetRotation();
 
         DOVirtual.DelayedCall(0.3f, () =>
         {

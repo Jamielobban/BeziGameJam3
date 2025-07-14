@@ -18,18 +18,16 @@ public class MovingSpike : MonoBehaviour
 
     void ResetSpike()
     {
-        // Kill old tween
         moveTween?.Kill();
 
-        // Force absolute world position reset
-        transform.position = pointA.position;
+        // Start from StartPoint's local position
+        transform.localPosition = pointA.localPosition;
 
-        // Tween using absolute world positions
-        moveTween = transform.DOMove(pointB.position, moveDuration)
+        moveTween = transform.DOLocalMove(pointB.localPosition, moveDuration)
             .SetEase(Ease.Linear)
             .SetDelay(delay)
             .SetLoops(-1, LoopType.Yoyo)
-            .SetUpdate(true); // optional: makes it continue if game is paused
+            .SetUpdate(true);
     }
 
     void OnTriggerEnter2D(Collider2D other)

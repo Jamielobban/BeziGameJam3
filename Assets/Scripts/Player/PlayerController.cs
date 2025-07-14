@@ -7,47 +7,45 @@ public class PlayerController : MonoBehaviour
     [Header("Movement Settings")]
     public float moveSpeed = 10f;
     public float jumpForce = 15f;
-    public float fallMultiplier = 2f;
     public float airControlFactor = 0.3f;
     public float decelerationFactor = 0.2f;
+    public float airDecelerationFactor = 0.1f;
+    public float maxAirSpeedMult = 0f;
+
+    public float fallMultiplier;
 
     [Header("Ground Check")]
     public LayerMask groundLayer;
     public float groundCheckDistance = 0.1f;
     public Vector2 groundCheckOffset = Vector2.zero;
 
-    private Rigidbody2D rb;
-    private Vector2 moveInput;
-    private float currentRotation;
+    [Header("Coyote Time")]
+    public float coyoteTimeDuration = 0.3f;
 
+    [Header("Feedbacks")]
     public MMF_Player jumpFeedbacks;
     public MMF_Player landFeedbacks;
 
-    private bool wasGroundedLastFrame = true;
-
-    public float maxAirSpeedMult = 0f;
-
-    [Header("Coyote Time")]
-    public float coyoteTimeDuration = 0.3f;
-    private float coyoteTimer = 0f;
-    private bool hasJumpedThisFrame = false;
-    [Header("Air Settings")]
-    public float airDecelerationFactor = 0.1f; // tweakable in inspector
-
-    [Header("Debug / Ground Check Helper")]
+    [Header("Debug")]
     public Transform groundCheckVisual;
+
+    private Rigidbody2D rb;
+    private Vector2 moveInput;
+    private bool wasGroundedLastFrame = true;
+    private bool hasJumpedThisFrame = false;
+    private float coyoteTimer = 0f;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0f;  // Disable built-in gravity
+        //rb.gravityScale = 1f; // Use Unity's built-in gravity
     }
 
     private void FixedUpdate()
     {
-        bool isActuallyGrounded = CheckIfGrounded();
+        bool isGrounded = CheckIfGrounded();
 
-        if (isActuallyGrounded)
+        if (isGrounded)
         {
             coyoteTimer = coyoteTimeDuration;
         }
@@ -56,37 +54,32 @@ public class PlayerController : MonoBehaviour
             coyoteTimer -= Time.fixedDeltaTime;
         }
 
-        if (!wasGroundedLastFrame && isActuallyGrounded)
+        if (!wasGroundedLastFrame && isGrounded)
         {
             landFeedbacks?.PlayFeedbacks();
             hasJumpedThisFrame = false;
         }
 
-        wasGroundedLastFrame = isActuallyGrounded;
+        wasGroundedLastFrame = isGrounded;
 
         ApplyMovement();
 
+        if (rb.linearVelocity.y < 0f)
+        {
+            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1f) * Time.fixedDeltaTime;
+        }
+
         if (groundCheckVisual != null)
         {
-            Vector2 gravityDir = Physics2D.gravity.normalized;
-            Vector2 rotatedOffset = Quaternion.Euler(0, 0, currentRotation) * groundCheckOffset;
-            Vector2 origin = (Vector2)transform.position + rotatedOffset;
-
-            groundCheckVisual.position = origin + gravityDir * groundCheckDistance;
-
-            float angle = Mathf.Atan2(gravityDir.y, gravityDir.x) * Mathf.Rad2Deg;
-            groundCheckVisual.rotation = Quaternion.Euler(0, 0, angle + 90f); 
+            Vector2 origin = (Vector2)transform.position + groundCheckOffset;
+            groundCheckVisual.position = origin + Vector2.down * groundCheckDistance;
+            groundCheckVisual.rotation = Quaternion.identity;
         }
     }
 
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-    }
-
-    public void SetRotation(float rotation)
-    {
-        currentRotation = rotation;
     }
 
     public void ApplyMovement()
@@ -103,6 +96,18 @@ public class PlayerController : MonoBehaviour
         Vector2 gravityDir = Physics2D.gravity.normalized;
         Vector2 rightDir = new Vector2(-gravityDir.y, gravityDir.x).normalized;
 
+        // Reproject velocity into new gravity/right space (Option 2)
+        Vector2 currentVel = rb.linearVelocity;
+        float verticalComponent = Vector2.Dot(currentVel, gravityDir);
+        float horizontalComponent = Vector2.Dot(currentVel, rightDir);
+
+        // Clamp horizontal speed to avoid runaway buildup
+        horizontalComponent = Mathf.Clamp(horizontalComponent, -moveSpeed, moveSpeed);
+
+        // Reconstruct velocity based on current orientation
+        rb.linearVelocity = gravityDir * verticalComponent + rightDir * horizontalComponent;
+
+        // Movement input
         float horizontalSpeed = moveSpeed * moveInput.x;
 
         Vector2 currentHorizontalVel = Vector2.Dot(rb.linearVelocity, rightDir) * rightDir;
@@ -130,10 +135,10 @@ public class PlayerController : MonoBehaviour
                     rb.linearVelocity = newHorizontalVel + verticalVel;
                 }
             }
-             else
+            else
             {
-                    Vector2 decel = Vector2.Lerp(currentHorizontalVel, Vector2.zero, airDecelerationFactor);
-                    rb.linearVelocity = decel + verticalVel;
+                Vector2 decel = Vector2.Lerp(currentHorizontalVel, Vector2.zero, airDecelerationFactor);
+                rb.linearVelocity = decel + verticalVel;
             }
         }
 
@@ -149,18 +154,16 @@ public class PlayerController : MonoBehaviour
         if (coyoteTimer > 0f && !hasJumpedThisFrame)
         {
             jumpFeedbacks?.PlayFeedbacks();
-            Vector2 jumpDirection = -Physics2D.gravity.normalized;
-            rb.AddForce(jumpDirection * jumpForce, ForceMode2D.Impulse);
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             coyoteTimer = 0f;
-            hasJumpedThisFrame = true; // prevent another jump in the same frame
+            hasJumpedThisFrame = true;
         }
     }
 
     private bool CheckIfGrounded()
     {
-        Vector2 rotatedOffset = Quaternion.Euler(0, 0, currentRotation) * groundCheckOffset;
-        Vector2 origin = (Vector2)transform.position + rotatedOffset;
-        RaycastHit2D hit = Physics2D.Raycast(origin, Physics2D.gravity.normalized, groundCheckDistance, groundLayer);
+        Vector2 origin = (Vector2)transform.position + groundCheckOffset;
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, groundCheckDistance, groundLayer);
         return hit.collider != null;
     }
 
@@ -175,13 +178,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        float rotationAngle = Application.isPlaying ? currentRotation : transform.eulerAngles.z;
-
-        Vector2 gravityDir = Physics2D.gravity.normalized;
-        Vector2 rotatedOffset = Quaternion.Euler(0, 0, rotationAngle) * groundCheckOffset;
-        Vector2 origin = (Vector2)transform.position + rotatedOffset;
-
+        Vector2 origin = (Vector2)transform.position + groundCheckOffset;
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(origin, origin + gravityDir * groundCheckDistance);
+        Gizmos.DrawLine(origin, origin + Vector2.down * groundCheckDistance);
     }
 }

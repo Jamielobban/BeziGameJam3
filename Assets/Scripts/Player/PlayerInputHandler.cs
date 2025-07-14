@@ -5,13 +5,13 @@ public class PlayerInputHandler : MonoBehaviour
 {
     private InputSystem_Actions controls;
     private PlayerController movement;
-    private ScreenRotator rotator;
+    private WorldRotator rotator;
 
     private void Awake()
     {
         controls = new InputSystem_Actions();
         movement = GetComponent<PlayerController>();
-        rotator = FindFirstObjectByType<ScreenRotator>();
+        rotator = FindFirstObjectByType<WorldRotator>();
 
         controls.Player.Move.performed += ctx => movement.SetMoveInput(ctx.ReadValue<Vector2>());
         controls.Player.Move.canceled += ctx => movement.SetMoveInput(Vector2.zero);
@@ -29,6 +29,5 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void FixedUpdate()
     {
-        movement.SetRotation(rotator.CurrentRotation);
     }
 }

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6913590391868323907}
   - component: {fileID: 7445090986887837348}
-  - component: {fileID: 1773225555513175212}
   m_Layer: 0
   m_Name: Face
   m_TagString: Untagged
@@ -88,18 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1773225555513175212
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 698453326720545145}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d033ca42b40995b428ebcd9e28b9f599, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4955175292848693012
 GameObject:
   m_ObjectHideFlags: 0
@@ -451,6 +438,7 @@ GameObject:
   - component: {fileID: 4712008667860992069}
   - component: {fileID: 2973936989671030261}
   - component: {fileID: 2264593300438360219}
+  - component: {fileID: 5740642452763201604}
   m_Layer: 0
   m_Name: Renderer
   m_TagString: Untagged
@@ -863,6 +851,19 @@ MonoBehaviour:
         MoveToScaleMax: {x: 2, y: 2, z: 2}
         BumpScaleMin: {x: 25, y: 20, z: 20}
         BumpScaleMax: {x: 30, y: 30, z: 30}
+--- !u!114 &5740642452763201604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6917404100017139452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d033ca42b40995b428ebcd9e28b9f599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  worldRoot: {fileID: 0}
 --- !u!1 &7324291660494715876
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,9 +915,9 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 5
+  m_LinearDamping: 8
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -941,20 +942,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
-  jumpForce: 30
-  fallMultiplier: 2.5
+  jumpForce: 36
   airControlFactor: 50
   decelerationFactor: 0.3
+  airDecelerationFactor: 0.1
+  maxAirSpeedMult: 2
+  fallMultiplier: 5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   groundCheckDistance: 0.7
   groundCheckOffset: {x: 0, y: -0.45}
+  coyoteTimeDuration: 0.3
   jumpFeedbacks: {fileID: 2264593300438360219}
   landFeedbacks: {fileID: 6080073436787721844}
-  maxAirSpeedMult: 2
-  coyoteTimeDuration: 0.3
-  airDecelerationFactor: 0.1
   groundCheckVisual: {fileID: 6913590391868323907}
 --- !u!114 &119951997043401782
 MonoBehaviour:
