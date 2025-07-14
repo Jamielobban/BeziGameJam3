@@ -8,6 +8,11 @@ public class GameManager : MonoBehaviour
     public EdgeTileManager tileManager;
     public ScreenRotator screenRotator;
 
+
+    void Start()
+    {
+        player = FindFirstObjectByType<PlayerController>();
+    }
     public void SoftReset()
     {
         //crtGlitch.TestPowerOffEffect();

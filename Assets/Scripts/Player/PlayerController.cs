@@ -31,6 +31,11 @@ public class PlayerController : MonoBehaviour
     public float coyoteTimeDuration = 0.3f;
     private float coyoteTimer = 0f;
     private bool hasJumpedThisFrame = false;
+    [Header("Air Settings")]
+    public float airDecelerationFactor = 0.1f; // tweakable in inspector
+
+    [Header("Debug / Ground Check Helper")]
+    public Transform groundCheckVisual;
 
     private void Awake()
     {
@@ -60,6 +65,18 @@ public class PlayerController : MonoBehaviour
         wasGroundedLastFrame = isActuallyGrounded;
 
         ApplyMovement();
+
+        if (groundCheckVisual != null)
+        {
+            Vector2 gravityDir = Physics2D.gravity.normalized;
+            Vector2 rotatedOffset = Quaternion.Euler(0, 0, currentRotation) * groundCheckOffset;
+            Vector2 origin = (Vector2)transform.position + rotatedOffset;
+
+            groundCheckVisual.position = origin + gravityDir * groundCheckDistance;
+
+            float angle = Mathf.Atan2(gravityDir.y, gravityDir.x) * Mathf.Rad2Deg;
+            groundCheckVisual.rotation = Quaternion.Euler(0, 0, angle + 90f); 
+        }
     }
 
     public void SetMoveInput(Vector2 input)
@@ -112,6 +129,11 @@ public class PlayerController : MonoBehaviour
                     newHorizontalVel = newHorizontalVel.normalized * maxAirSpeed;
                     rb.linearVelocity = newHorizontalVel + verticalVel;
                 }
+            }
+             else
+            {
+                    Vector2 decel = Vector2.Lerp(currentHorizontalVel, Vector2.zero, airDecelerationFactor);
+                    rb.linearVelocity = decel + verticalVel;
             }
         }
 
