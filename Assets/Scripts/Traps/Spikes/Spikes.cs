@@ -5,9 +5,10 @@ public class Spikes : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<PlayerController>())
+        var player = other.GetComponent<PlayerController>();
+        if (player != null && player.isHittable)
         {
-            //die
+            player.isHittable = false;
             FindFirstObjectByType<GameManager>().SoftReset();
         }
     }

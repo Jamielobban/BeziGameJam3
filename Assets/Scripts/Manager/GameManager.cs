@@ -14,24 +14,27 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        crtGlitch = FindFirstObjectByType<CRTGlitchTester>();
         player = FindFirstObjectByType<PlayerController>();
+        playerSpawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
+        tileManager = FindFirstObjectByType<EdgeTileManager>();
         worldRotator = FindFirstObjectByType<WorldRotator>();
         audio1 = GetComponentInChildren<AudioSource>();
     }
     public void SoftReset()
     {
         //crtGlitch.TestPowerOffEffect();
-        tileManager.ResetAllTiles(); // You'll need to implement this
         crtGlitch.SoftResetDie();
         worldRotator.ResetRotation();
         audio1.Play();
         DOVirtual.DelayedCall(0.3f, () =>
         {
-            // Reset player
+            tileManager.ResetAllTiles(); 
+
             player.transform.position = playerSpawnPoint.position;
             player.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+            player.isHittable = true;
 
-            // Reset tiles
 
 
         });

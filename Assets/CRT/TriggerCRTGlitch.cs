@@ -9,19 +9,25 @@ public class CRTGlitchTester : MonoBehaviour
     [SerializeField] private Material crtMaterial;
     [SerializeField] private Transform crtQuad;
 
-    // Your normal CRT look values (from your image)
     private const float ResetDistortionStrength = 0.03f;
     private const float ResetStaticStrength = 0.19f;
     private const float ResetImageBrightness = 2f;
     private static readonly Vector2 ResetCRTWarpStrength = new Vector2(0.5f, 1f);
     private static readonly Vector3 ResetQuadScale = new Vector3(14.991f, 10.52f, 10.52f);
+    public bool isStart;
 
     private void Start()
     {
-        SoftResetDie();
+        if (!isStart)
+        {
+            SoftResetDie();
+        }
+        else
+        {
+            SoftResetDie();
+        }
     }
 
-    // Glitch effect with configurable duration
     [ContextMenu("CRT Glitch")]
     private void TestCRTGlitchEffect(float duration)
     {
@@ -75,6 +81,8 @@ public class CRTGlitchTester : MonoBehaviour
     [ContextMenu("Test Power On Effect")]
     public void TestPowerOnEffect()
     {
+        GameObject.FindGameObjectWithTag("TurnOnAudio").GetComponent<AudioSource>().Play();
+        Debug.Log("Now");
         ResetCRTSettings();
 
         crtQuad.DOScale(ResetQuadScale, 0.7f).SetEase(Ease.OutQuad);
@@ -86,16 +94,17 @@ public class CRTGlitchTester : MonoBehaviour
 
     public void SoftResetDie()
     {
-        //TestCRTGlitchEffect(0.1f);
-        //ResetCRTSettings();
-         // Force CRT to power-off state first
-        crtQuad.localScale = new Vector3(10f, 5f, 5f);  // Your collapsed scale here
+
+        crtQuad.localScale = new Vector3(10f, 5f, 5f); 
         crtMaterial.SetVector("_CRTWarpStrength", new Vector4(5f, 5f, 0f, 0f));
 
         crtMaterial.SetFloat("_DistortionStrength", -13.28f);
         crtMaterial.SetFloat("_StaticStrength", 1.9f);
         crtMaterial.SetFloat("_ImageBrightness", 1.24f);
 
-        TestPowerOnEffect();
+        if (!isStart)
+        {
+            TestPowerOnEffect();
+        }
     }
 }

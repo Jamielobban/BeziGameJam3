@@ -59,11 +59,14 @@ public class BouncingHazard : MonoBehaviour
 
         if (collision.collider.CompareTag("Player"))
         {
-            transform.position = spawnPosition;
-            rb.linearVelocity = Vector2.zero;
+            if (FindFirstObjectByType<PlayerController>().isHittable)
+            { 
+                transform.position = spawnPosition;
+                rb.linearVelocity = Vector2.zero;
 
-            StartCoroutine(LaunchWithDelay(0.4f));
-            FindFirstObjectByType<GameManager>().SoftReset();
+                StartCoroutine(LaunchWithDelay(0.4f));
+                FindFirstObjectByType<GameManager>().SoftReset();
+            }
         }
         audioSource.Play();
     }

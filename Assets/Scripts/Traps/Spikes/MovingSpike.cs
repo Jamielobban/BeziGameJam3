@@ -20,7 +20,6 @@ public class MovingSpike : MonoBehaviour
     {
         moveTween?.Kill();
 
-        // Start from StartPoint's local position
         transform.localPosition = pointA.localPosition;
 
         moveTween = transform.DOLocalMove(pointB.localPosition, moveDuration)

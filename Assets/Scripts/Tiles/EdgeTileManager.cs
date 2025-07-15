@@ -3,7 +3,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 using System.Collections.Generic;
-
+using System.Linq;
 public class EdgeTileManager : MonoBehaviour
 {
     public static EdgeTileManager Instance { get; private set; }
@@ -14,7 +14,11 @@ public class EdgeTileManager : MonoBehaviour
     public float tileSize = 1f;
 
     private readonly List<EdgeTile> cornerTiles = new();
-    private readonly List<EdgeTile> allTiles = new();
+    private List<EdgeTile> allTiles = new();
+
+    private AudioSource so;
+
+    public string nextSceneName;
 
     private void Awake()
     {
@@ -45,7 +49,6 @@ public class EdgeTileManager : MonoBehaviour
             allTiles.Add(tile);
             tile.activated = false;
 
-            // Rebuild corner list by checking RED color (as marked during editor placement)
             var sprite = tile.GetComponent<SpriteRenderer>();
             if (sprite.color == Color.red)
             {
@@ -60,19 +63,21 @@ public class EdgeTileManager : MonoBehaviour
 
     public void ResetAllTiles()
     {
+        allTiles = FindObjectsByType<EdgeTile>(FindObjectsSortMode.None).ToList();
         foreach (var tile in allTiles)
         {
             tile.activated = false;
 
             if (cornerTiles.Contains(tile))
             {
-                tile.GetComponent<SpriteRenderer>().color = Color.red; // Corner stays red
+                //tile.GetComponent<SpriteRenderer>().color = Color.red; // Corner stays red
             }
             else
             {
                 tile.GetComponent<SpriteRenderer>().color = Color.white;
             }
         }
+        Debug.Log("Reset!");
     }
 
 
@@ -138,17 +143,18 @@ public class EdgeTileManager : MonoBehaviour
         foreach (var tile in allTiles)
         {
             if (cornerTiles.Contains(tile))
-                continue;  // Skip corners
+                continue;  
 
             if (!tile.activated)
-                return;  // Still tiles left to activate
+                return;  
         }
 
+        FindFirstObjectByType<PlayerController>().isHittable = false;
+
         Debug.Log("All tiles activated! Starting transition...");
-        FindObjectOfType<LevelTransitionManager>().StartTransition(() =>
-        {
-            Debug.Log("Level swapped!");
-        });
+        so = GameObject.FindGameObjectWithTag("CompleteAudio").GetComponent<AudioSource>();
+        so.Play();
+        FindObjectOfType<LevelTransitionManager>().StartTransition(nextSceneName);
     }
 
    #if UNITY_EDITOR

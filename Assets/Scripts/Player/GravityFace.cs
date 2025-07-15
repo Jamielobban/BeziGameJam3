@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GravityFace : MonoBehaviour
 {
-    public Transform worldRoot; // Assign the rotating world root (e.g., Parent)
+    public Transform worldRoot; 
 
     void Start()
     {
@@ -11,7 +11,7 @@ public class GravityFace : MonoBehaviour
 
     void LateUpdate()
     {
-        // Match the rotation of the world
+
         transform.rotation = worldRoot.rotation;
     }
 }

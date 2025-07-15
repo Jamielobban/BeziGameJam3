@@ -8,6 +8,10 @@ TagManager:
   - JumpAudioSource
   - HitAudioSource
   - LandAudioSource
+  - CompleteAudio
+  - TransitionAudio
+  - SpawnPoint
+  - TurnOnAudio
   layers:
   - Default
   - TransparentFX
