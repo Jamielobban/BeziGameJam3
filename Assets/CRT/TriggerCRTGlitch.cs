@@ -13,7 +13,7 @@ public class CRTGlitchTester : MonoBehaviour
     private const float ResetStaticStrength = 0.19f;
     private const float ResetImageBrightness = 2f;
     private static readonly Vector2 ResetCRTWarpStrength = new Vector2(0.5f, 1f);
-    private static readonly Vector3 ResetQuadScale = new Vector3(14.991f, 10.52f, 10.52f);
+    private static readonly Vector3 ResetQuadScale = new Vector3(9.823153f, 6.893441f, 6.893441f);
     public bool isStart;
 
     private void Start()
